@@ -10,4 +10,5 @@ django-classy-tags
 django-admin-tools
 pylibmc==1.2.2
 django-pylibmc-sasl==0.2.4
+dj-database-url==0.2.0
 

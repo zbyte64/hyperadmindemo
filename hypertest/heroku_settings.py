@@ -2,6 +2,9 @@ import os
 from settings import *
 import re
 
+import dj_database_url
+DATABASES = {'default': dj_database_url.config(default='postgres://localhost')}
+
 INSTALLED_APPS = list(INSTALLED_APPS)
 
 INSTALLED_APPS.append('gunicorn')
