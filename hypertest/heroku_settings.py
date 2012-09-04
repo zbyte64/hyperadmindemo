@@ -21,10 +21,10 @@ if 'S3_KEY' in os.environ:
     AWS_ACCESS_KEY_ID = os.environ['S3_KEY']
     AWS_SECRET_ACCESS_KEY = os.environ['S3_SECRET']
 
-    DEFAULT_FILE_STORAGE = 'storage.UnicodeSafeS3Storage'
+    DEFAULT_FILE_STORAGE = 'hypertest.storage.UnicodeSafeS3Storage'
     AWS_STORAGE_BUCKET_NAME = "%s-media" % PROJECT_NAME
 
-    STATICFILES_STORAGE="storage.StaticS3FileStorage"
+    STATICFILES_STORAGE="hypertest.storage.StaticS3FileStorage"
     AWS_STATIC_STORAGE_BUCKET_NAME = '%s-static' % PROJECT_NAME
     STATIC_URL = "https://s3.amazonaws.com/%s/" % AWS_STATIC_STORAGE_BUCKET_NAME
     ADMIN_MEDIA_PREFIX = '%sadmin/'%STATIC_URL
