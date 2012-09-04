@@ -1,5 +1,7 @@
 from django.conf.urls import patterns, include, url
 
+from django.views.generic.simple import direct_to_template
+
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
 admin.autodiscover()
@@ -13,6 +15,7 @@ admin_client = EmberJSClient(api_endpoint='/hyper-admin/')
 
 urlpatterns = patterns('',
     # Examples:
+    (r'^$',             direct_to_template, {'template': 'hypertest/index.html'}),
     # url(r'^$', 'hypertest.views.home', name='home'),
     # url(r'^hypertest/', include('hypertest.foo.urls')),
 
