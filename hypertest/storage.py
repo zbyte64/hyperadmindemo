@@ -13,7 +13,7 @@ Standard file system storage for static files.
 """
     def __init__(self, bucket=settings.AWS_STATIC_STORAGE_BUCKET_NAME, acl=DEFAULT_ACL):
         super(StaticS3FileStorage, self).__init__(bucket=bucket, acl=acl)
-        settings.STATIC_URL = self.generator.make_bare_url(bucket)
+        #settings.STATIC_URL = self.generator.make_bare_url(bucket)
         
         self.connection.create_bucket(bucket)
     
