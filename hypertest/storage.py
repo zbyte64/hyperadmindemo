@@ -1,8 +1,8 @@
-from storages.backends.s3 import S3Storage, DEFAULT_ACL
+from storages.backends.s3boto import S3BotoStorage, DEFAULT_ACL
 
 from django.conf import settings
 
-class UnicodeSafeS3Storage(S3Storage):
+class UnicodeSafeS3Storage(S3BotoStorage):
     def _clean_name(self, name):
         #herp derp in python 2.7 plus someone prematurely closing an issue: https://bitbucket.org/david/django-storages/issue/64/unicode-filenames-problem-with-rackspace
         return str(super(UnicodeSafeS3Storage, self)._clean_name(name))
