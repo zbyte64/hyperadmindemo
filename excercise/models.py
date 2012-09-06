@@ -7,4 +7,5 @@ class Workout(models.Model):
     endurance = models.BooleanField()
     strength = models.BooleanField()
     flexibility = models.BooleanField()
+    gps_track = models.FileField(upload_to='workouts/')
 
