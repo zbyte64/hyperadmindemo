@@ -124,8 +124,14 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
     'hyperadmin',
-    
+    'emberclient',
     'excercise',
+    
+    
+    'dockit',
+    'dockit.backends.djangodocument',
+    'dockitcms',
+    'dockitcms.widgetblock',
 )
 
 # A sample logging configuration. The only tangible logging
@@ -156,3 +162,21 @@ LOGGING = {
         },
     }
 }
+
+DOCKIT_BACKENDS = {
+    'default': {
+        'ENGINE': 'dockit.backends.djangodocument.backend.ModelDocumentStorage',
+    }
+}
+DOCKIT_INDEX_BACKENDS = {
+    'default': {
+        'ENGINE': 'dockit.backends.djangodocument.backend.ModelIndexStorage',
+    }
+}
+
+
+SCOPE_PROCESSORS = [
+    'dockitcms.widgetblock.scope_processors.widgets',
+    'dockitcms.widgetblock.scope_processors.modelwidgets',
+]
+

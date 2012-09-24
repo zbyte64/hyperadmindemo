@@ -9,3 +9,6 @@ class Workout(models.Model):
     flexibility = models.BooleanField()
     gps_track = models.FileField(upload_to='workouts/')
 
+class DataPoint(models.Model):
+    workout = models.ForeignKey(Workout)
+    data = models.TextField()

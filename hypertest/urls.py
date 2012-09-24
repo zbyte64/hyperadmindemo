@@ -7,11 +7,11 @@ from django.contrib import admin
 admin.autodiscover()
 
 import hyperadmin
-from hyperadmin.clients import EmberJSClient
 hyperadmin.autodiscover() #TODO this does nothing
 hyperadmin.site.install_models_from_site(admin.site) #ports admin models to hyperadmin
 hyperadmin.site.install_storage_resources() #enables the storage resource for media and static
-admin_client = EmberJSClient(api_endpoint='/hyper-admin/')
+
+from dockitcms.sites import site as dockitcmssite
 
 urlpatterns = patterns('',
     # Examples:
@@ -25,5 +25,9 @@ urlpatterns = patterns('',
     # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
     url(r'^hyper-admin/', include(hyperadmin.site.urls)),
-    url(r'^emberjs-admin/', include(admin_client.urls)),
+    url(r'^emberjs-admin/', include('emberclient.urls')),
+)
+
+urlpatterns += patterns('',
+    url(r'^', include(dockitcmssite.urls)),
 )

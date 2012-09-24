@@ -62,15 +62,53 @@ if ('MEMCACHE_PASSWORD' in os.environ and
         },
     }
 
-if 'MONGOLAB_URI' in os.environ:
+if 'MONGOLAB_URI' in os.environ and False:
     pattern = re.compile(r'^mongodb://(?P<username>[\w\d]+):(?P<password>[\w\d]+)@(?P<host>.+):(?P<port>\d+)/(?P<database>[\w\d]+)')
     match = pattern.match(os.environ['MONGOLAB_URI'])
     if match:
         params = match.groupdict()
         
-        MONGO_HOST = params['host']
-        MONGO_USER = params['username']
-        MONGO_PASSWORD = params['password']
-        MONGO_PORT = int(params['port'])
-        MONGO_DB = params['database']
+        DOCKIT_BACKENDS['mongo'] = {
+            'ENGINE':'dockit.backends.mongo.backend.MongoDocumentStorage',
+            'USER':params['username'],
+            'PASSWORD':params['password'],
+            'DB':params['database'],
+            'HOST':params['host'],
+            'PORT':int(params['port']),
+        }
+        DOCKIT_INDEX_BACKENDS['mongo'] = {
+            'ENGINE':'dockit.backends.mongo.backend.MongoIndexStorage',
+            'USER':params['username'],
+            'PASSWORD':params['password'],
+            'DB':params['database'],
+            'HOST':params['host'],
+            'PORT':int(params['port']),
+        }
+        DOCKIT_BACKENDS['default'] = DOCKIT_BACKENDS['mongo']
+        DOCKIT_INDEX_BACKENDS['default'] = DOCKIT_INDEX_BACKENDS['mongo']
+
+if 'MONGOHQ_URL' in os.environ and False:
+    pattern = re.compile(r'^mongodb://(?P<username>[\w\d]+):(?P<password>[\w\d]+)@(?P<host>.+):(?P<port>\d+)/(?P<database>[\w\d]+)')
+    match = pattern.match(os.environ['MONGOHQ_URL'])
+    if match:
+        params = match.groupdict()
+        
+        DOCKIT_BACKENDS['mongo'] = {
+            'ENGINE':'dockit.backends.mongo.backend.MongoDocumentStorage',
+            'USER':params['username'],
+            'PASSWORD':params['password'],
+            'DB':params['database'],
+            'HOST':params['host'],
+            'PORT':int(params['port']),
+        }
+        DOCKIT_INDEX_BACKENDS['mongo'] = {
+            'ENGINE':'dockit.backends.mongo.backend.MongoIndexStorage',
+            'USER':params['username'],
+            'PASSWORD':params['password'],
+            'DB':params['database'],
+            'HOST':params['host'],
+            'PORT':int(params['port']),
+        }
+        DOCKIT_BACKENDS['default'] = DOCKIT_BACKENDS['mongo']
+        DOCKIT_INDEX_BACKENDS['default'] = DOCKIT_INDEX_BACKENDS['mongo']
 
