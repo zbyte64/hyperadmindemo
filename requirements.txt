@@ -15,3 +15,4 @@ pymongo
 -e git+git://github.com/zbyte64/django-dockitcms.git#egg=django-dockitcms
 django-classy-tags
 -e git+git://github.com/zbyte64/django-hyperadmin-s3resource.git#egg=django-hyperadmin-s3resource
+-e git+git://github.com/zbyte64/django-hyperadmin-dockitresource.git#egg=django-hyperadmin-dockitresource

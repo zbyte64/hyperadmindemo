@@ -126,6 +126,7 @@ INSTALLED_APPS = (
     'hyperadmin',
     'emberclient',
     'excercise',
+    'books',
     
     
     'dockit',
