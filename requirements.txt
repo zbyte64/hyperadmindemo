@@ -8,6 +8,7 @@ django-pylibmc-sasl==0.2.4
 dj-database-url==0.2.0
 -e git+git://github.com/zbyte64/django-hyperadmin.git#egg=django-hyperadmin
 -e git+git://github.com/zbyte64/django-hyperadmin-emberclient.git#egg=django-hyperadmin-emberclient
+-e git+git://github.com/zbyte64/django-hyperadmin-client.git#egg=django-hyperadmin-client
 mimeparse
 boto
 pymongo

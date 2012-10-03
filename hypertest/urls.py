@@ -30,8 +30,9 @@ urlpatterns = patterns('',
 
     # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^hyper-admin/', include(hyperadmin.site.urls)),
+    url(r'^hyper-api/', include(hyperadmin.site.urls)),
     url(r'^emberjs-admin/', include('emberclient.urls')),
+    url(r'^hyper-admin/', include('hyperadminclient.urls')),
 )
 
 urlpatterns += patterns('',
