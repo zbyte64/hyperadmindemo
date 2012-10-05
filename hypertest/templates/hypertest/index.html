@@ -1,11 +1,51 @@
 <html>
 <head></head>
 <body>
+<div>
 {% block content %}
+<h1>Hyperadmin Demo Site</h1>
+<p>
+Hyperadmin Github: <a href="https://github.com/zbyte64/django-hyperadmin">https://github.com/zbyte64/django-hyperadmin</a><br/>
+</p>
+
+<h2>Login Info</h2>
+<p>
 Username: admin<br/>
 Password: admin<br/>
+</p>
+
+<h2>Clients</h2>
+<section>
+<p>
+<a href="/hyper-api/">API Endpoint</a><br/>
+Where api calls are made to. View in the browser to see elements that are available in the resource.
+</p>
+
+<p>
 <a href="/emberjs-admin/">Emberjs Client</a><br/>
-<a href="/hyper-admin/">API Endpoint</a></br>
+A client powered by emberjs. All communication is done through a JSON-based API</br>
+Github: <a href="https://github.com/zbyte64/django-hyperadmin-emberclient">https://github.com/zbyte64/django-hyperadmin-emberclient</a>
+</p>
+
+<p>
+<a href="/hyper-admin/">Admin Client</a><br/>
+A client powered purely by django templates</br>
+Github: <a href="https://github.com/zbyte64/django-hyperadmin-adminclient">https://github.com/zbyte64/django-hyperadmin-adminclient</a>
+</p>
+</section>
+
+<h2>Other Resouces</h2>
+<section>
+<p>
+<a href="https://github.com/zbyte64/django-hyperadmin-s3resource">https://github.com/zbyte64/django-hyperadmin-s3resource</a><br/>
+Storage resource that enables direct uploading to S3
+</p>
+
+<p>
+<a href="https://github.com/zbyte64/django-hyperadmin-dockitresource">https://github.com/zbyte64/django-hyperadmin-dockitresource</a><br/>
+Resource that enables dockit integration
+</p>
+</section>
 {% endblock %}
 </div>
 </body>
