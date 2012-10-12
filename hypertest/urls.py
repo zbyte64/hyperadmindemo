@@ -32,6 +32,7 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
     url(r'^hyper-api/', include(hyperadmin.site.urls)),
     url(r'^emberjs-admin/', include('emberclient.urls')),
+    url(r'^backbone-admin/', include('backboneclient.urls')),
     url(r'^hyper-admin/', include('hyperadminclient.urls')),
 )
 

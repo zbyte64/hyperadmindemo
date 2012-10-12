@@ -126,6 +126,7 @@ INSTALLED_APPS = (
     'hyperadmin',
     'hyperadminclient',
     'emberclient',
+    'backboneclient',
     'excercise',
     'books',
     
