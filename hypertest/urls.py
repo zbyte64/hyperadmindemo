@@ -17,8 +17,6 @@ if 'S3_KEY' in os.environ:
 else:
     hyperadmin.site.install_storage_resources() #enables the storage resource for media and static
 
-from dockitcms.sites import site as dockitcmssite
-
 urlpatterns = patterns('',
     # Examples:
     (r'^$',             direct_to_template, {'template': 'hypertest/index.html'}),
@@ -37,5 +35,5 @@ urlpatterns = patterns('',
 )
 
 urlpatterns += patterns('',
-    url(r'^', include(dockitcmssite.urls)),
+    url(r'^', include('dockitcms.urls')),
 )

@@ -1,4 +1,4 @@
-Django==1.4.2
+Django==1.4.3
 psycopg2
 gevent
 gunicorn
@@ -14,7 +14,7 @@ mimeparse
 boto
 pymongo
 -e git+git://github.com/zbyte64/django-dockit.git#egg=django-dockit
--e git+git://github.com/zbyte64/django-dockitcms.git#egg=django-dockitcms
+-e git+git://github.com/zbyte64/django-dockitcms.git@endpoint#egg=django-dockitcms
 django-classy-tags
 -e git+git://github.com/zbyte64/django-hyperadmin-s3resource.git#egg=django-hyperadmin-s3resource
 -e git+git://github.com/zbyte64/django-hyperadmin-dockitresource.git#egg=django-hyperadmin-dockitresource

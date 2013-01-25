@@ -1,4 +1,7 @@
 from django.db import models
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes import generic
+
 
 class Workout(models.Model):
     excercise = models.CharField(max_length=100)
@@ -12,3 +15,12 @@ class Workout(models.Model):
 class DataPoint(models.Model):
     workout = models.ForeignKey(Workout)
     data = models.TextField()
+
+class TaggedItem(models.Model):
+    tag = models.SlugField()
+    content_type = models.ForeignKey(ContentType)
+    object_id = models.PositiveIntegerField()
+    content_object = generic.GenericForeignKey('content_type', 'object_id')
+
+    def __unicode__(self):
+        return self.tag
