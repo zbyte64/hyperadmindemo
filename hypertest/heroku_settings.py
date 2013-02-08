@@ -9,6 +9,11 @@ INSTALLED_APPS = list(INSTALLED_APPS)
 
 INSTALLED_APPS.append('gunicorn')
 
+
+DEBUG = os.environ.get('DJANGO_DEBUG', False) in ('True', 'TRUE', 'true', True)
+TEMPLATE_DEBUG = DEBUG
+
+
 if 'MAILGUN_SMTP_LOGIN' in os.environ:
     EMAIL_HOST = os.environ['MAILGUN_SMTP_SERVER']
     EMAIL_HOST_USER = os.environ['MAILGUN_SMTP_LOGIN']
