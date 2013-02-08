@@ -48,11 +48,11 @@ class PublisherResource(DocumentResource):
 class AuthorResource(DocumentResource):
     list_display = ('internal_id', 'user')
 
-hyperadmin.site.register(Book, BookResource)
-hyperadmin.site.register(Publisher, PublisherResource)
-hyperadmin.site.register(Author, AuthorResource)
+hyperadmin.site.register(Book, BookResource, app_name='books')
+hyperadmin.site.register(Publisher, PublisherResource, app_name='books')
+hyperadmin.site.register(Author, AuthorResource, app_name='books')
 
 class ComplexObjectResource(DocumentResource):
     pass
 
-hyperadmin.site.register(ComplexObject, ComplexObjectResource)
+hyperadmin.site.register(ComplexObject, ComplexObjectResource, app_name='books')
