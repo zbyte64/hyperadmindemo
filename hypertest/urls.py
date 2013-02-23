@@ -34,6 +34,6 @@ urlpatterns = patterns('',
     url(r'^hyper-admin/', include('hyperadminclient.urls')),
 )
 
-#urlpatterns += patterns('',
-#    url(r'^', include('dockitcms.urls')),
-#)
+urlpatterns += patterns('',
+    url(r'^', include('dockitcms.urls')),
+)
