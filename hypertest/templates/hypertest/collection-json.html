@@ -85,26 +85,29 @@ var appBuilder = function(client) {
     self.submitTemplate = function(template, params, done) {
         console.log('submit', template)
         _.each(params, function(element, index, list) {
-            console.log('datum:', template.datum(index))
             if (template.datum(index)) {
-                template.set(index, list[index])
+                //if the value is an item, use its href
+                var value = list[index]
+                if (value.href) {
+                    value = value.href
+                }
+                template.set(index, value)
             }
         });
         
-        done(null, 'foobar')
-        /*
         template.submit(function(error, collection) {
-            done(error, collection)
+            done(collection, error)
         });
-        */
     }
     
     self.getResourceItem = function(url, key, params, done) {
         self.client(url, function(error, collection) {
             var item;
+            console.log('items:', collection.items)
             _.each(collection.items, function(element, index, list) {
-                _.each
+                console.log('check:', key, list[index].get(key), params[key])
                 if (list[index].get(key) == params[key]) {
+                    console.log('match:', list[index])
                     item = list[index]
                     return false;
                 }
@@ -223,17 +226,20 @@ var startBuilding = function() {
         'name':'Blogging',
         'slug':'blogging'
     }, function(app) {
+        console.log('app:', app)
         builder.getOrCreateVirtualDocumentCollection({
             'key':'blog',
             'application': app,
             'title': 'My Blog'
         }, function(collection) {
+            console.log('collection:', collection)
             builder.getOrCreateSubsite({
                 'url':'/',
                 'name':'root',
                 'slug':'root',
                 'sites':[1]
             }, function(subsite) {
+                console.log('subsite:', subsite)
                 builder.createPublicResource({
                     'subsite': subsite,
                     'collection': collection,
@@ -246,6 +252,7 @@ var startBuilding = function() {
                         {'field_type': 'BooleanField', 'name':'public'}
                     ]
                 }, function(pub_resource) {
+                    console.log('pub resource:', pub_resource)
                     builder.createListViewPoint({
                         'resource': pub_resource,
                         'template_source': 'html',
