@@ -20,6 +20,7 @@ else:
 urlpatterns = patterns('',
     # Examples:
     (r'^$',             direct_to_template, {'template': 'hypertest/index.html'}),
+    (r'^collection-json.js/$', direct_to_template, {'template': 'hypertest/collection-json.html'}),
     # url(r'^$', 'hypertest.views.home', name='home'),
     # url(r'^hypertest/', include('hypertest.foo.urls')),
 

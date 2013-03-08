@@ -1,0 +1,313 @@
+{% load hyperadmin_utils %}<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
+
+</head>
+<body>
+  {% csrf_token %}
+  <!--[if lt IE 7]>
+    <p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
+  <![endif]-->
+<p>
+
+</p>
+<pre>
+
+</pre>
+  <!--script src="{{STATIC_URL}}collectionjson/collection-json.js"></script-->
+  <!--script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.5/angular.min.js"></script-->
+  <!--script src="http://cloud.github.com/downloads/collection-json/collection-json.js/collection-json.js"></script-->
+  <!-- script src="https://github.com/downloads/collection-json/collection-json.js/collection-json.angular.js"></script-->
+  <!--script src="{{STATIC_URL}}collectionjson/collection-json.angular.js"></script-->
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
+  <script src="//code.jquery.com/jquery-1.9.1.min.js"></script>
+  <script src="{{STATIC_URL}}collectionjson/jquery.collection-json.js"></script>
+  <script>
+{% raw %}
+var cj = CollectionJSON;
+
+var handleIndex = function(error, collection) {
+  console.log(collection.href)
+  console.log(collection.links)
+  console.log(collection.items)
+  /*
+  collection.link('users').follow(function(error, collection){
+
+    // Print out the current users
+    console.log(collection.items);
+
+    // Lets get a list of addresses from the first user we got back
+    collection.items[0].link('addresses').follow(function(error, collection){
+
+      // Let's add a new address from the template
+      var template = collection.template();
+      template.set('street', '123 Fake Street');
+
+      // Submit our new template
+      template.submit(function(error, collection){
+        if (!error)
+          console.log("Added a new address!!!");
+      });
+    });
+  });
+  */
+}
+
+var login = function(error, collection, done) {
+  var template = collection.template()
+  console.log('logging in', template)
+  template.set('username', 'admin')
+  template.set('password', 'admin')
+  
+  template.submit(function(error, collection) {
+    if (!error) {
+      console.log("Logged in")
+      done(error, collection)
+    }
+  })
+}
+
+var appBuilder = function(client) {
+    var self = {};
+    
+    self.client = client
+    self.base_url = '/hyper-api/dockitcms/'
+    
+    self.submitTemplate = function(template, params, done) {
+        console.log('submit', template)
+        _.each(params, function(element, index, list) {
+            console.log('datum:', template.datum(index))
+            if (template.datum(index)) {
+                template.set(index, list[index])
+            }
+        });
+        
+        done(null, 'foobar')
+        /*
+        template.submit(function(error, collection) {
+            done(error, collection)
+        });
+        */
+    }
+    
+    self.getResourceItem = function(url, key, params, done) {
+        self.client(url, function(error, collection) {
+            var item;
+            _.each(collection.items, function(element, index, list) {
+                _.each
+                if (list[index].get(key) == params[key]) {
+                    item = list[index]
+                    return false;
+                }
+            });
+            done(item)
+        });
+    }
+    
+    self.createResourceItem = function(url, params, done) {
+        self.client(url, function(error, collection) {
+            var template = collection.template()
+            self.submitTemplate(template, params, done)
+        })
+    }
+    
+    self.getOrCreateResourceItem = function(lookup, create, params, done) {
+        lookup(params, function(item) {
+            if(item) {
+                done(item)
+            } else {
+                create(params, done)
+            }
+        });
+    }
+    
+    self.getApplication = function(params, done) {
+        var url = self.base_url + 'application/'
+        self.getResourceItem(url, 'slug', params, done)
+    }
+    
+    self.createApplication = function(params, done) {
+        var url = self.base_url + 'application/add/'
+        self.createResourceItem(url, params, done)
+    }
+    
+    self.getOrCreateApplication = function(params, done) {
+        self.getOrCreateResourceItem(self.getApplication, self.createApplication, params, done)
+    }
+    
+    self.getCollection = function(params, done) {
+        var url = self.base_url + 'collection/'
+        self.getResourceItem(url, 'key', params, done)
+    }
+    
+    self.createCollection = function(params, done) {
+        var url = self.base_url + 'collection/add/'
+        self.createResourceItem(url, params, done)
+    }
+    
+    self.createVirtualDocumentCollection = function(params, done) {
+        var url = self.base_url + 'collection/add/?collection_type=dockitcms.virtualdocument'
+        self.createResourceItem(url, params, function(virtual_collection) {
+            //create fields
+            //TODO make fields synchronously
+            _.each(params.fields || [], function(element, index, list) {
+                var field = list[index]
+                var url = virtual_collection.href + 'dotpath/fields/add/?field_type=' + field.field_type
+                self.createResourceItem(url, field, function() {})
+            })
+            done(virtual_collection)
+        });
+    }
+    
+    self.getOrCreateVirtualDocumentCollection = function(params, done) {
+        self.getOrCreateResourceItem(self.getCollection, self.createVirtualDocumentCollection, params, done)
+    }
+    
+    self.getSubsite = function(params, done) {
+        var url = self.base_url + 'subsite/'
+        self.getResourceItem(url, 'slug', params, done)
+    }
+    
+    self.createSubsite = function(params, done) {
+        var url = self.base_url + 'subsite/add/'
+        self.createResourceItem(url, params, done)
+    }
+    
+    self.getOrCreateSubsite = function(params, done) {
+        self.getOrCreateResourceItem(self.getSubsite, self.createSubsite, params, done)
+    }
+    
+    self.getPublicResource = function(params, done) {
+        var url = self.base_url + 'publicresourcedefinition/'
+        //TODO url & subsite
+        self.getResourceItem(url, 'url', params, done)
+    }
+    
+    self.createPublicResource = function(params, done) {
+        var url = self.base_url + 'publicresourcedefinition/add/'
+        self.createResourceItem(url, params, done)
+    }
+    
+    self.createViewPoint = function(params, done) {
+        //params.resource //the resource to attach the view point to
+    }
+    
+    self.createListViewPoint = function(params, done) {
+        var url = params.resource.href + 'dotpath/view_points/add/?view_type=dockitcms.listview'
+        self.createResourceItem(url, params, done)
+    }
+    
+    self.createDetailViewPoint = function(params, done) {
+        var url = params.resource.href + 'dotpath/view_points/add/?view_type=dockitcms.detailview'
+        self.createResourceItem(url, params, done)
+    }
+    
+    return self;
+}
+
+var startBuilding = function() {
+    console.log("ready to build")
+    var builder = appBuilder(cj);
+    
+    //CONSIDER: at the top level non-async calls look better
+    builder.getOrCreateApplication({
+        'name':'Blogging',
+        'slug':'blogging'
+    }, function(app) {
+        builder.getOrCreateVirtualDocumentCollection({
+            'key':'blog',
+            'application': app,
+            'title': 'My Blog'
+        }, function(collection) {
+            builder.getOrCreateSubsite({
+                'url':'/',
+                'name':'root',
+                'slug':'root',
+                'sites':[1]
+            }, function(subsite) {
+                builder.createPublicResource({
+                    'subsite': subsite,
+                    'collection': collection,
+                    'url':'/blogging/',
+                    'name':'My Blog',
+                    'fields': [
+                        {'field_type': 'CharField', 'name':'title'},
+                        {'field_type': 'TextField', 'name':'body'},
+                        {'field_type': 'SlugField', 'name':'slug'},
+                        {'field_type': 'BooleanField', 'name':'public'}
+                    ]
+                }, function(pub_resource) {
+                    builder.createListViewPoint({
+                        'resource': pub_resource,
+                        'template_source': 'html',
+                        'template_html': '{{object_list}}'
+                    })
+                    builder.createDetailViewPoint({
+                        'resource': pub_resource,
+                        'template_source': 'html',
+                        'template_html': '{{object}}'
+                    })
+                });
+            });
+        });
+    });
+    
+    /*
+    var app = builder.createApplication({'name':'Blogging', 'slug':'blogging'})
+    var collection = builder.createVirtualDocumentCollection({
+        'key':'blog',
+        'application': app,
+        'title': 'My Blog'
+    })
+    var subsite = builder.createSubsite({
+        'url':'/',
+        'name':'root',
+        'slug':'root',
+        'sites':[1]
+    })
+    var pub_resource = builder.createPublicResource({
+        'subsite': subsite,
+        'collection': collection,
+        'url':'/blogging/',
+        'name':'My Blog',
+        'fields': [
+            {'field_type': 'CharField', 'name':'title'},
+            {'field_type': 'TextField', 'name':'body'},
+            {'field_type': 'SlugField', 'name':'slug'},
+            {'field_type': 'BooleanField', 'name':'public'}
+        ]
+    })
+    var list_vp = builder.createListViewPoint({
+        'resource': pub_resource,
+        'template_source': 'html',
+        'template_html': '{{object_list}}'
+    })
+    var detail_vp = builder.createDetailViewPoint({
+        'resource': pub_resource,
+        'template_source': 'html',
+        'template_html': '{{object}}'
+    })
+    */
+}
+
+// Start at the root of our api
+cj("/hyper-api/", function(error, collection){
+  if (collection.href == "/hyper-api/authentication/") {
+      login(error, collection, startBuilding)
+  } else {
+      startBuilding(error, collection);
+  }
+});
+{% endraw %}
+</script>
+</body>
+</html>
