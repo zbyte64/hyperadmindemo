@@ -202,7 +202,13 @@ var startBuilding = function() {
         builder.getOrCreateVirtualDocumentCollection({
             'key':'blog',
             'application': app,
-            'title': 'My Blog'
+            'title': 'My Blog',
+            'fields': [
+                {'field_type': 'CharField', 'name':'title'},
+                {'field_type': 'TextField', 'name':'body'},
+                {'field_type': 'SlugField', 'name':'slug'},
+                {'field_type': 'BooleanField', 'name':'public'}
+            ]
         }, function(collection) {
             console.log('collection:', collection)
             builder.getOrCreateSubsite({
@@ -216,25 +222,19 @@ var startBuilding = function() {
                     'subsite': subsite,
                     'collection': collection,
                     'url':'/blogging/',
-                    'name':'My Blog',
-                    'fields': [
-                        {'field_type': 'CharField', 'name':'title'},
-                        {'field_type': 'TextField', 'name':'body'},
-                        {'field_type': 'SlugField', 'name':'slug'},
-                        {'field_type': 'BooleanField', 'name':'public'}
-                    ]
+                    'name':'My Blog'
                 }, function(pub_resource) {
                     console.log('pub resource:', pub_resource)
                     builder.createListViewPoint({
                         'resource': pub_resource,
                         'template_source': 'html',
                         'template_html': '{{object_list}}'
-                    })
+                    }, function() {})
                     builder.createDetailViewPoint({
                         'resource': pub_resource,
                         'template_source': 'html',
                         'template_html': '{{object}}'
-                    })
+                    }, function() {})
                 });
             });
         });
