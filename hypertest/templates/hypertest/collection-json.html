@@ -35,33 +35,6 @@
 {% raw %}
 var cj = CollectionJSON;
 
-var handleIndex = function(error, collection) {
-  console.log(collection.href)
-  console.log(collection.links)
-  console.log(collection.items)
-  /*
-  collection.link('users').follow(function(error, collection){
-
-    // Print out the current users
-    console.log(collection.items);
-
-    // Lets get a list of addresses from the first user we got back
-    collection.items[0].link('addresses').follow(function(error, collection){
-
-      // Let's add a new address from the template
-      var template = collection.template();
-      template.set('street', '123 Fake Street');
-
-      // Submit our new template
-      template.submit(function(error, collection){
-        if (!error)
-          console.log("Added a new address!!!");
-      });
-    });
-  });
-  */
-}
-
 var login = function(error, collection, done) {
   var template = collection.template()
   console.log('logging in', template)
@@ -88,8 +61,9 @@ var appBuilder = function(client) {
             if (template.datum(index)) {
                 //if the value is an item, use its href
                 var value = list[index]
-                if (value.href) {
-                    value = value.href
+                if (value.href) { //consider, does the field have options?
+                    var parts = value.href.split('/')
+                    value = parts[parts.length-2]
                 }
                 template.set(index, value)
             }
@@ -103,9 +77,7 @@ var appBuilder = function(client) {
     self.getResourceItem = function(url, key, params, done) {
         self.client(url, function(error, collection) {
             var item;
-            console.log('items:', collection.items)
             _.each(collection.items, function(element, index, list) {
-                console.log('check:', key, list[index].get(key), params[key])
                 if (list[index].get(key) == params[key]) {
                     console.log('match:', list[index])
                     item = list[index]
