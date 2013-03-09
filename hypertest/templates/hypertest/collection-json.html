@@ -133,14 +133,30 @@ var appBuilder = function(client) {
         var url = self.base_url + 'collection/add/?collection_type=dockitcms.virtualdocument'
         self.createResourceItem(url, params, function(virtual_collection) {
             //create fields
-            //TODO make fields synchronously
-            _.each(params.fields || [], function(element, index, list) {
-                var field = list[index]
-                var url = virtual_collection.href + 'dotpath/fields/add/?field_type=' + field.field_type
-                self.createResourceItem(url, field, function() {})
-            })
-            done(virtual_collection)
+            var fields = params.fields || []
+            if (fields) {
+                self.createVDFields(fields, done, virtual_collection)
+            } else {
+                done(virtual_collection)
+            }
         });
+    }
+    
+    self.createVDFields = function(fields, done, collection) {
+        var field = fields.pop()
+        if (field) {
+            field.collection = collection
+            self.createVDField(field, function() {
+                self.createVDFields(fields, done, collection)
+            })
+        } else {
+            done(collection)
+        }
+    }
+    
+    self.createVDField = function(params, done) {
+        var url = params.collection.href + 'dotpath/fields/add/?field_type=' + params.field_type
+        self.createResourceItem(url, params, done)
     }
     
     self.getOrCreateVirtualDocumentCollection = function(params, done) {
@@ -229,12 +245,13 @@ var startBuilding = function() {
                         'resource': pub_resource,
                         'template_source': 'html',
                         'template_html': '{{object_list}}'
-                    }, function() {})
-                    builder.createDetailViewPoint({
-                        'resource': pub_resource,
-                        'template_source': 'html',
-                        'template_html': '{{object}}'
-                    }, function() {})
+                    }, function() {
+                        builder.createDetailViewPoint({
+                            'resource': pub_resource,
+                            'template_source': 'html',
+                            'template_html': '{{object}}'
+                        }, function() {})
+                    });
                 });
             });
         });
