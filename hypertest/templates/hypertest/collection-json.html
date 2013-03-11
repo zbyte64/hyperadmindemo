@@ -9,26 +9,7 @@
     <title></title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width">
-
-</head>
-<body>
-  {% csrf_token %}
-  <!--[if lt IE 7]>
-    <p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
-  <![endif]-->
-<p>
-
-</p>
-<pre>
-
-</pre>
-  <!--script src="{{STATIC_URL}}collectionjson/collection-json.js"></script-->
-  <!--script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.5/angular.min.js"></script-->
-  <!--script src="http://cloud.github.com/downloads/collection-json/collection-json.js/collection-json.js"></script-->
-  <!-- script src="https://github.com/downloads/collection-json/collection-json.js/collection-json.angular.js"></script-->
-  <!--script src="{{STATIC_URL}}collectionjson/collection-json.angular.js"></script-->
-  
-  <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
   <script src="//code.jquery.com/jquery-1.9.1.min.js"></script>
   <script src="{{STATIC_URL}}collectionjson/jquery.collection-json.js"></script>
   <script>
@@ -205,8 +186,36 @@ var appBuilder = function(client) {
     return self;
 }
 
+
+
+// Start at the root of our api
+cj("/hyper-api/", function(error, collection){
+  if (collection.href == "/hyper-api/authentication/") {
+      login(error, collection, startBuilding)
+  } else {
+      //startBuilding(error, collection);
+  }
+});
+{% endraw %}
+</script>
+
+</head>
+<body>
+  {% csrf_token %}
+  <!--[if lt IE 7]>
+    <p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
+  <![endif]-->
+<p>
+Build out the CMS with calls through the collection.js API</br>
+Github: <a href="https://github.com/zbyte64/collection-json.js/tree/topic-jquery">https://github.com/zbyte64/collection-json.js/tree/topic-jquery</a>
+</p>
+<p>
+Copy and paste the code bellow to begin:
+</p>
+<pre>
 var startBuilding = function() {
     console.log("ready to build")
+    //appBuilder is a simple wrapper around the api, view source to see
     var builder = appBuilder(cj);
     
     //CONSIDER: at the top level non-async calls look better
@@ -256,54 +265,8 @@ var startBuilding = function() {
             });
         });
     });
-    
-    /*
-    var app = builder.createApplication({'name':'Blogging', 'slug':'blogging'})
-    var collection = builder.createVirtualDocumentCollection({
-        'key':'blog',
-        'application': app,
-        'title': 'My Blog'
-    })
-    var subsite = builder.createSubsite({
-        'url':'/',
-        'name':'root',
-        'slug':'root',
-        'sites':[1]
-    })
-    var pub_resource = builder.createPublicResource({
-        'subsite': subsite,
-        'collection': collection,
-        'url':'/blogging/',
-        'name':'My Blog',
-        'fields': [
-            {'field_type': 'CharField', 'name':'title'},
-            {'field_type': 'TextField', 'name':'body'},
-            {'field_type': 'SlugField', 'name':'slug'},
-            {'field_type': 'BooleanField', 'name':'public'}
-        ]
-    })
-    var list_vp = builder.createListViewPoint({
-        'resource': pub_resource,
-        'template_source': 'html',
-        'template_html': '{{object_list}}'
-    })
-    var detail_vp = builder.createDetailViewPoint({
-        'resource': pub_resource,
-        'template_source': 'html',
-        'template_html': '{{object}}'
-    })
-    */
 }
-
-// Start at the root of our api
-cj("/hyper-api/", function(error, collection){
-  if (collection.href == "/hyper-api/authentication/") {
-      login(error, collection, startBuilding)
-  } else {
-      startBuilding(error, collection);
-  }
-});
-{% endraw %}
-</script>
+startBuilding()
+</pre>
 </body>
 </html>
