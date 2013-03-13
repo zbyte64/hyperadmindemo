@@ -52,6 +52,9 @@ var appBuilder = function(client) {
         });
         
         template.submit(function(error, collection) {
+            if (error) {
+                console.log('Error submitting:', error)
+            }
             done(collection, error)
         });
     }
@@ -125,7 +128,7 @@ var appBuilder = function(client) {
     }
     
     self.createVDFields = function(fields, collection, done) {
-        var field = fields.pop()
+        var field = fields.pop(0)
         if (field) {
             field.collection = collection
             self.createField(field, collection.href+'dotpath/fields/', function(obj) {
@@ -137,13 +140,13 @@ var appBuilder = function(client) {
     }
     
     self.createFields = function(fields, path, done) {
-        var field = fields.pop()
+        var field = fields.pop(0)
         if (field) {
             self.createField(field, path, function(obj) {
-                self.createFields(fields, done, obj.href)
+                self.createFields(fields, path, done)
             })
         } else {
-            done(collection)
+            done()
         }
     }
     
@@ -151,8 +154,10 @@ var appBuilder = function(client) {
         var url = path+'add/?field_type=' + params.field_type
         if (params.fields) {
             self.createResourceItem(url, params, function(obj) {
-                self.createFields(params.fields, done, path)
-            })l
+                subpath = obj.href //TODO get the add link instead
+                subpath = subpath.substr(0, subpath.length-1) + '.fields/'
+                self.createFields(params.fields, subpath, done)
+            })
         } else {
             self.createResourceItem(url, params, done)
         }
@@ -209,7 +214,7 @@ var appBuilder = function(client) {
 // Start at the root of our api
 cj("/hyper-api/", function(error, collection){
   if (collection.href == "/hyper-api/authentication/") {
-      login(error, collection, startBuilding)
+      login(error, collection, function(){})
   } else {
       //startBuilding(error, collection);
   }
@@ -263,7 +268,8 @@ builder.getOrCreateVirtualDocumentCollection({
         {'field_type': 'ComplexListField', 'name':'images',
             'fields': [
                 {'field_type': 'CharField', 'name':'alt'},
-                {'field_type': 'ImageField', 'name':'image'}
+                {'field_type': 'ImageField', 'name':'image', 
+                 'upload_to':'blog-images', 'null': false, 'blank': false}
             ]
         }
     ]
@@ -330,16 +336,7 @@ And we can also point the client to the public resource to get API representatio
 </p>
 <pre>
 cj('/blogging/', function(error, collection, done) {
-    var template = collection.template()
-    template.set('title', 'First Post')
-    template.set('body', 'Hello World')
-    template.set('slug', 'first-post')
-    
-    template.submit(function(error, collection) {
-        if (!error) {
-            console.log('Current blog items:', collection.items)
-        }
-    })
+    console.log('Blog items:', collection.items)
 })
 </pre>
 </body>
