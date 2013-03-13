@@ -31,6 +31,7 @@ var login = function(error, collection, done) {
 }
 
 var appBuilder = function(client) {
+    //TODO use collection.json links to find urls and actions
     var self = {};
     
     self.client = client
@@ -116,28 +117,45 @@ var appBuilder = function(client) {
             //create fields
             var fields = params.fields || []
             if (fields) {
-                self.createVDFields(fields, done, virtual_collection)
+                self.createVDFields(fields, virtual_collection, done)
             } else {
                 done(virtual_collection)
             }
         });
     }
     
-    self.createVDFields = function(fields, done, collection) {
+    self.createVDFields = function(fields, collection, done) {
         var field = fields.pop()
         if (field) {
             field.collection = collection
-            self.createVDField(field, function() {
-                self.createVDFields(fields, done, collection)
+            self.createField(field, collection.href+'dotpath/fields/', function(obj) {
+                self.createVDFields(fields, collection, done)
             })
         } else {
             done(collection)
         }
     }
     
-    self.createVDField = function(params, done) {
-        var url = params.collection.href + 'dotpath/fields/add/?field_type=' + params.field_type
-        self.createResourceItem(url, params, done)
+    self.createFields = function(fields, path, done) {
+        var field = fields.pop()
+        if (field) {
+            self.createField(field, path, function(obj) {
+                self.createFields(fields, done, obj.href)
+            })
+        } else {
+            done(collection)
+        }
+    }
+    
+    self.createField = function(params, path, done) {
+        var url = path+'add/?field_type=' + params.field_type
+        if (params.fields) {
+            self.createResourceItem(url, params, function(obj) {
+                self.createFields(params.fields, done, path)
+            })l
+        } else {
+            self.createResourceItem(url, params, done)
+        }
     }
     
     self.getOrCreateVirtualDocumentCollection = function(params, done) {
@@ -213,60 +231,116 @@ Github: <a href="https://github.com/zbyte64/collection-json.js/tree/topic-jquery
 Copy and paste the code bellow to begin:
 </p>
 <pre>
-var startBuilding = function() {
-    console.log("ready to build")
-    //appBuilder is a simple wrapper around the api, view source to see
-    var builder = appBuilder(cj);
-    
-    //CONSIDER: at the top level non-async calls look better
-    builder.getOrCreateApplication({
-        'name':'Blogging',
-        'slug':'blogging'
-    }, function(app) {
-        console.log('app:', app)
-        builder.getOrCreateVirtualDocumentCollection({
-            'key':'blog',
-            'application': app,
-            'title': 'My Blog',
+//cj is our collection json client already built for us
+//appBuilder is a wrapper around the collection json client to build apps easier
+var builder = appBuilder(cj);
+var built_app = null;
+var built_collection = null;
+var built_subsite = null;
+var built_resource = null;
+
+//execute each block one at a time, or chain the calls
+
+//build an application to hold our blogging app
+builder.getOrCreateApplication({
+    'name':'Blogging',
+    'slug':'blogging'
+}, function(app) {
+    built_app = app
+    console.log('App created:', app)
+});
+
+
+//build a blog collection that holds a gallery
+builder.getOrCreateVirtualDocumentCollection({
+    'key':'blog',
+    'application': built_app,
+    'title': 'My Blog',
+    'fields': [
+        {'field_type': 'CharField', 'name':'title'},
+        {'field_type': 'TextField', 'name':'body'},
+        {'field_type': 'SlugField', 'name':'slug'},
+        {'field_type': 'ComplexListField', 'name':'images',
             'fields': [
-                {'field_type': 'CharField', 'name':'title'},
-                {'field_type': 'TextField', 'name':'body'},
-                {'field_type': 'SlugField', 'name':'slug'},
-                {'field_type': 'BooleanField', 'name':'public'}
+                {'field_type': 'CharField', 'name':'alt'},
+                {'field_type': 'ImageField', 'name':'image'}
             ]
-        }, function(collection) {
-            console.log('collection:', collection)
-            builder.getOrCreateSubsite({
-                'url':'/',
-                'name':'root',
-                'slug':'root',
-                'sites':[1]
-            }, function(subsite) {
-                console.log('subsite:', subsite)
-                builder.createPublicResource({
-                    'subsite': subsite,
-                    'collection': collection,
-                    'url':'/blogging/',
-                    'name':'My Blog'
-                }, function(pub_resource) {
-                    console.log('pub resource:', pub_resource)
-                    builder.createListViewPoint({
-                        'resource': pub_resource,
-                        'template_source': 'html',
-                        'template_html': '{{object_list}}'
-                    }, function() {
-                        builder.createDetailViewPoint({
-                            'resource': pub_resource,
-                            'template_source': 'html',
-                            'template_html': '{{object}}'
-                        }, function() {})
-                    });
-                });
-            });
-        });
+        }
+    ]
+}, function(collection) {
+    built_collection = collection
+    console.log('Collection created:', collection)
+});
+
+
+//build a subsite for our resource to be mounted under
+builder.getOrCreateSubsite({
+    'url':'/',
+    'name':'root',
+    'slug':'root',
+    'sites':[1]
+}, function(subsite) {
+    built_subsite = subsite
+    console.log('Subsite created:', subsite)
+});
+
+
+//build a public resource with a list and detail view
+builder.createPublicResource({
+    'subsite': built_subsite,
+    'collection': built_collection,
+    'url':'/blogging/',
+    'name':'My Blog'
+}, function(pub_resource) {
+    built_resource = pub_resource
+    console.log('Public resource created:', pub_resource)
+    builder.createListViewPoint({
+        'resource': pub_resource,
+        'template_source': 'html',
+        'template_html': '{{object_list}}'
+    }, function() {
+        builder.createDetailViewPoint({
+            'resource': pub_resource,
+            'template_source': 'html',
+            'template_html': '{{object}}'
+        }, function() {})
     });
-}
-startBuilding()
+});
+</pre>
+<p>
+Once the blog app is built we can push data through the admin API
+</p>
+<pre>
+cj('/cmsadmin/blogging/blog/add/', function(error, collection, done) {
+    var template = collection.template()
+    template.set('title', 'First Post')
+    template.set('body', 'Hello World')
+    template.set('slug', 'first-post')
+    
+    template.submit(function(error, collection) {
+        if (!error) {
+            console.log("Blog entry created")
+            //TODO image uploading is a bit harder in javascript
+        }
+    })
+})
+</pre>
+<p>
+And we can also point the client to the public resource to get API representations of our blog entries.
+</p>
+<pre>
+cj('/blogging/', function(error, collection, done) {
+    var template = collection.template()
+    template.set('title', 'First Post')
+    template.set('body', 'Hello World')
+    template.set('slug', 'first-post')
+    
+    template.submit(function(error, collection) {
+        if (!error) {
+            console.log('Current blog items:', collection.items)
+        }
+    })
+})
 </pre>
 </body>
 </html>
