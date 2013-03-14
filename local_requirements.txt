@@ -1,5 +1,5 @@
-Django==1.4.2
--e git+git://github.com/zbyte64/django-hyperadmin.git#egg=django-hyperadmin
+Django==1.4.4
+-e git+git://github.com/zbyte64/django-hyperadmin.git@develop#egg=django-hyperadmin
 -e git+git://github.com/zbyte64/django-hyperadmin-emberclient.git#egg=django-hyperadmin-emberclient
 -e git+git://github.com/zbyte64/django-hyperadmin-backboneclient.git#egg=django-hyperadmin-backboneclient
 -e git+git://github.com/zbyte64/django-hyperadmin-client.git#egg=django-hyperadmin-client
