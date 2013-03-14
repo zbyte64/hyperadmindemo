@@ -209,16 +209,32 @@ var appBuilder = function(client) {
     return self;
 }
 
+var builder = null;
+var built_app = null;
+var built_collection = null;
+var built_subsite = null;
+var built_resource = null;
 
 
-// Start at the root of our api
-cj("/hyper-api/", function(error, collection){
-  if (collection.href == "/hyper-api/authentication/") {
-      login(error, collection, function(){})
-  } else {
-      //startBuilding(error, collection);
-  }
+$(document).ready(function() {
+    // Start at the root of our api
+    cj("/hyper-api/", function(error, collection){
+      if (collection.href == "/hyper-api/authentication/") {
+          login(error, collection, function(){})
+      } else {
+          //startBuilding(error, collection);
+      }
+    });
+    
+    $('button.runjs').click(function() {
+        console.log('running')
+        var code_id = $(this).attr('data-target')
+        eval($('#'+code_id).val())
+        return false; 
+    });
 });
+
+
 {% endraw %}
 </script>
 
@@ -228,24 +244,32 @@ cj("/hyper-api/", function(error, collection){
   <!--[if lt IE 7]>
     <p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
   <![endif]-->
+<div id="into">
 <p>
 Build out the CMS with calls through the collection.js API</br>
 Github: <a href="https://github.com/zbyte64/collection-json.js/tree/topic-jquery">https://github.com/zbyte64/collection-json.js/tree/topic-jquery</a>
 </p>
 <p>
-Copy and paste the code bellow to begin:
+Open up your javascript console to see the response of executing each part.
 </p>
-<pre>
+</div>
+
+<div class="demo">
+<p>
+<textarea id="instantiate" cols="80" rows="5">
 //cj is our collection json client already built for us
 //appBuilder is a wrapper around the collection json client to build apps easier
-var builder = appBuilder(cj);
-var built_app = null;
-var built_collection = null;
-var built_subsite = null;
-var built_resource = null;
+builder = appBuilder(cj);
+console.log('Ready to build')
+</textarea>
+<br/>
+<button class="runjs" data-target="instantiate">Start</button>
+</p>
+</div>
 
-//execute each block one at a time, or chain the calls
-
+<div class="demo">
+<p>
+<textarea id="createapp" cols="80" rows="9">
 //build an application to hold our blogging app
 builder.getOrCreateApplication({
     'name':'Blogging',
@@ -254,8 +278,15 @@ builder.getOrCreateApplication({
     built_app = app
     console.log('App created:', app)
 });
+</textarea>
+<br/>
+<button class="runjs" data-target="createapp">Create App</button>
+</p>
+</div>
 
-
+<div class="demo">
+<p>
+<textarea id="createcollection"  cols="80" rows="22">
 //build a blog collection that holds a gallery
 builder.getOrCreateVirtualDocumentCollection({
     'key':'blog',
@@ -277,8 +308,15 @@ builder.getOrCreateVirtualDocumentCollection({
     built_collection = collection
     console.log('Collection created:', collection)
 });
+</textarea>
+<br/>
+<button class="runjs" data-target="createcollection">Create Collection</button>
+</p>
+</div>
 
-
+<div class="demo">
+<p>
+<textarea id="createsubsite"  cols="80" rows="11">
 //build a subsite for our resource to be mounted under
 builder.getOrCreateSubsite({
     'url':'/',
@@ -289,8 +327,15 @@ builder.getOrCreateSubsite({
     built_subsite = subsite
     console.log('Subsite created:', subsite)
 });
+</textarea>
+<br/>
+<button class="runjs" data-target="createsubsite">Create Subsite</button>
+</p>
+</div>
 
-
+<div class="demo">
+<p>
+<textarea id="createresource"  cols="80" rows="22">
 //build a public resource with a list and detail view
 builder.createPublicResource({
     'subsite': built_subsite,
@@ -312,11 +357,18 @@ builder.createPublicResource({
         }, function() {})
     });
 });
-</pre>
+</textarea>
+<br/>
+<button class="runjs" data-target="createresource">Create Public Resource</button>
+</p>
+</div>
+
+<div class="demo">
+<p>
 <p>
 Once the blog app is built we can push data through the admin API
 </p>
-<pre>
+<textarea id="addblog"  cols="80" rows="14">
 cj('/cmsadmin/blogging/blog/add/', function(error, collection, done) {
     var template = collection.template()
     template.set('title', 'First Post')
@@ -330,14 +382,25 @@ cj('/cmsadmin/blogging/blog/add/', function(error, collection, done) {
         }
     })
 })
-</pre>
+</textarea>
+<br/>
+<button class="runjs" data-target="addblog">Add Blog Entry</button>
+</p>
+</div>
+
+<div class="demo">
+<p>
 <p>
 And we can also point the client to the public resource to get API representations of our blog entries.
 </p>
-<pre>
+<textarea id="viewblog"  cols="80" rows="4">
 cj('/blogging/', function(error, collection, done) {
     console.log('Blog items:', collection.items)
 })
-</pre>
+</textarea>
+<br/>
+<button class="runjs" data-target="viewblog">Fetch Blog Entries</button>
+</p>
+</div>
 </body>
 </html>
