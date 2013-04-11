@@ -1,4 +1,4 @@
-Django==1.4.4
+Django==1.4.5
 psycopg2
 gevent
 gunicorn
@@ -6,15 +6,17 @@ django-storages
 pylibmc==1.2.2
 django-pylibmc-sasl==0.2.4
 dj-database-url==0.2.0
--e git+git://github.com/zbyte64/django-hyperadmin.git@develop#egg=django-hyperadmin
+-e git+git://github.com/zbyte64/django-datatap.git#egg=django-datatap
+-e git+git://github.com/zbyte64/django-hyperadmin.git@topic-datataps#egg=django-hyperadmin
 -e git+git://github.com/zbyte64/django-hyperadmin-emberclient.git#egg=django-hyperadmin-emberclient
 -e git+git://github.com/zbyte64/django-hyperadmin-backboneclient.git#egg=django-hyperadmin-backboneclient
 -e git+git://github.com/zbyte64/django-hyperadmin-client.git#egg=django-hyperadmin-client
 mimeparse
 boto
 pymongo
--e git+git://github.com/zbyte64/django-dockit.git#egg=django-dockit
--e git+git://github.com/zbyte64/django-dockitcms.git#egg=django-dockitcms
+-e git+git://github.com/zbyte64/django-dockit.git@topic-serializecleanup#egg=django-dockit
+-e git+git://github.com/zbyte64/django-dockitcms.git@topic-publicclient#egg=django-dockitcms
 django-classy-tags
 -e git+git://github.com/zbyte64/django-hyperadmin-s3resource.git#egg=django-hyperadmin-s3resource
 -e git+git://github.com/zbyte64/django-hyperadmin-dockitresource.git#egg=django-hyperadmin-dockitresource
+South

@@ -130,12 +130,13 @@ INSTALLED_APPS = (
     'backboneclient',
     'excercise',
     'books',
-    
-    
+
+
     'dockit',
     'dockit.backends.djangodocument',
     'dockitcms',
     'dockitcms.widgetblock',
+    'dockitcms.pagecollection',
 )
 
 # A sample logging configuration. The only tangible logging
