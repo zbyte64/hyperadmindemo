@@ -131,7 +131,7 @@ INSTALLED_APPS = (
     'excercise',
     'books',
 
-
+    'south',
     'dockit',
     'dockit.backends.djangodocument',
     'dockitcms',
